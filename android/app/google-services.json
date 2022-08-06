@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "708797248619",
+    "project_id": "anand-shop-app",
+    "storage_bucket": "anand-shop-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708797248619:android:709e61fd7ca890e2b52d2e",
+        "android_client_info": {
+          "package_name": "com.example.anand_shop_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "708797248619-crsirbn1mjkoece3uhd6kagj9a3qlm7d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD8CxeKyD0Dlx2dmf70fIXOF8r3nNC-aC8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "708797248619-crsirbn1mjkoece3uhd6kagj9a3qlm7d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
