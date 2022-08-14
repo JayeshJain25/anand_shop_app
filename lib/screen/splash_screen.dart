@@ -1,29 +1,39 @@
 import 'dart:async';
 
-import 'package:anand_shop_app/routes/route_name.dart';
-import 'package:anand_shop_app/utils/common_function.dart';
-import 'package:anand_shop_app/widget/common_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class SplashScreen extends StatefulWidget {
+import '../routes/route_name.dart';
+import '../utils/colors.dart';
+import '../utils/common_function.dart';
+import '../widget/common_widget.dart';
+
+class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  _SplashScreenState createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends ConsumerState<SplashScreen> {
+  User? user = FirebaseAuth.instance.currentUser;
+
   @override
   void initState() {
-    Timer(
-      const Duration(seconds: 3),
-      () => moveToNextScreen(
-        context,
-        RouteName.selectUser,
-      ),
-    );
     super.initState();
+    displaySplash();
+  }
+
+  displaySplash() {
+    Timer(const Duration(seconds: 3), () async {
+      if (user != null) {
+        moveToNextScreen(context, RouteName.homeScreen);
+      } else {
+        moveToNextScreen(context, RouteName.selectUser);
+      }
+    });
   }
 
   @override
@@ -45,7 +55,7 @@ class _SplashScreenState extends State<SplashScreen> {
             child: Center(
               child: text(
                 text: "AN",
-                color: const Color(0xFFFD673A),
+                color: primaryColor,
                 fontSize: 55.sp,
                 fontWeight: FontWeight.w400,
               ),
@@ -69,7 +79,7 @@ class _SplashScreenState extends State<SplashScreen> {
             height: 25,
           ),
           const CircularProgressIndicator(
-            color: Color(0xFFFD673A),
+            color: primaryColor,
           )
         ],
       ),

@@ -18,6 +18,7 @@ dependencies:
   flutter_screenutil: ^5.5.3+2
   iconsax: ^0.0.8
   glassmorphism: ^3.0.0
+  fluttertoast: ^8.0.9
 
   #LOCAL STORE
   shared_preferences: ^2.0.15

@@ -1,14 +1,21 @@
-import 'package:anand_shop_app/utils/constants.dart';
-import 'package:anand_shop_app/widget/common_widget.dart';
+import 'package:anand_shop_app/provider/login_provider.dart';
+import 'package:anand_shop_app/routes/route_name.dart';
+import 'package:anand_shop_app/utils/common_function.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:glassmorphism/glassmorphism.dart';
+import 'package:iconsax/iconsax.dart';
 
-class SelectUserScreen extends StatelessWidget {
+import '../../utils/colors.dart';
+import '../../utils/constants.dart';
+import '../../widget/common_widget.dart';
+
+class SelectUserScreen extends ConsumerWidget {
   const SelectUserScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       backgroundColor: const Color(
         0xFF18191B,
@@ -67,20 +74,45 @@ class SelectUserScreen extends StatelessWidget {
                     1
                   ]),
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  textBtn(
-                              bgClr: Colors.white,
-                              color: primaryColor,
-                              radius: 25,
-                              fontSize: 11.sp,
-                              width: 145,
-                              fontWeight: FontWeight.normal,
-                              size: 35.h,
-                              primaryClr: primaryColor,
-                              text: "Cancel Booking",
-                              borderWidth: 2,
-                              function: btnFunction,
-                            )
+                  textBtnWithIcon(
+                    bgClr: Colors.white,
+                    color: primaryColor,
+                    radius: 25,
+                    fontSize: 14.sp,
+                    width: 0.7.sw,
+                    fontWeight: FontWeight.w500,
+                    size: 35.h,
+                    primaryClr: primaryColor,
+                    text: "Retailer Login",
+                    borderWidth: 1,
+                    function: () {
+                      ref.read(userRoleProvider.notifier).change("Retailer");
+                      moveToNextScreen(context, RouteName.signIn);
+                    },
+                    iconV: Iconsax.house_2,
+                  ),
+                  SizedBox(
+                    height: 15.h,
+                  ),
+                  textBtnWithIcon(
+                    bgClr: Colors.white,
+                    color: primaryColor,
+                    radius: 25,
+                    fontSize: 14.sp,
+                    width: 0.7.sw,
+                    fontWeight: FontWeight.w500,
+                    size: 35.h,
+                    primaryClr: primaryColor,
+                    text: "Customer Login",
+                    borderWidth: 1,
+                    function: () {
+                      ref.read(userRoleProvider.notifier).change("customer");
+                      moveToNextScreen(context, RouteName.signIn);
+                    },
+                    iconV: Iconsax.user_square,
+                  ),
                 ],
               ),
             ),
