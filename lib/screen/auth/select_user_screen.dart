@@ -16,107 +16,115 @@ class SelectUserScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Scaffold(
-      backgroundColor: const Color(
-        0xFF18191B,
-      ),
-      body: Container(
-        width: 1.sw,
-        height: 1.sh,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage(
-              background,
-            ),
-            fit: BoxFit.cover,
-          ),
+    return WillPopScope(
+      onWillPop: () async {
+        exitPopUp(context, "Exit App", "Do you want to exit an App?", () {
+          Navigator.of(context).pop(true);
+        });
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: const Color(
+          0xFF18191B,
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            text(
-              text: "Welcome",
-              color: const Color(0xFFcacbd2),
-              fontSize: 50.sp,
-              fontWeight: FontWeight.w400,
-            ),
-            GlassmorphicContainer(
-              width: 0.85.sw,
-              height: 0.3.sh,
-              borderRadius: 25,
-              blur: 7,
-              alignment: Alignment.topCenter,
-              border: 0,
-              linearGradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  const Color(0xFFFD673A).withAlpha(55),
-                  const Color(0xFFffffff).withAlpha(45),
-                ],
-                stops: const [
-                  0.3,
-                  1,
-                ],
+        body: Container(
+          width: 1.sw,
+          height: 1.sh,
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage(
+                authBg,
               ),
-              borderGradient: LinearGradient(
-                  begin: Alignment.bottomRight,
-                  end: Alignment.topLeft,
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              GlassmorphicContainer(
+                width: 0.85.sw,
+                height: 0.3.sh,
+                borderRadius: 25,
+                blur: 7,
+                alignment: Alignment.topCenter,
+                border: 0,
+                linearGradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                   colors: [
-                    const Color(0xFF4579C5).withAlpha(100),
-                    const Color(0x0fffffff).withAlpha(55),
-                    const Color(0xFFFD673A).withAlpha(10),
+                    const Color(0xFFFD673A).withAlpha(55),
+                    const Color(0xFFffffff).withAlpha(45),
                   ],
                   stops: const [
-                    0.06,
-                    0.95,
-                    1
-                  ]),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  textBtnWithIcon(
-                    bgClr: Colors.white,
-                    color: primaryColor,
-                    radius: 25,
-                    fontSize: 14.sp,
-                    width: 0.7.sw,
-                    fontWeight: FontWeight.w500,
-                    size: 35.h,
-                    primaryClr: primaryColor,
-                    text: "Retailer Login",
-                    borderWidth: 1,
-                    function: () {
-                      ref.read(userRoleProvider.notifier).change("Retailer");
-                      moveToNextScreen(context, RouteName.signIn);
-                    },
-                    iconV: Iconsax.house_2,
-                  ),
-                  SizedBox(
-                    height: 15.h,
-                  ),
-                  textBtnWithIcon(
-                    bgClr: Colors.white,
-                    color: primaryColor,
-                    radius: 25,
-                    fontSize: 14.sp,
-                    width: 0.7.sw,
-                    fontWeight: FontWeight.w500,
-                    size: 35.h,
-                    primaryClr: primaryColor,
-                    text: "Customer Login",
-                    borderWidth: 1,
-                    function: () {
-                      ref.read(userRoleProvider.notifier).change("customer");
-                      moveToNextScreen(context, RouteName.signIn);
-                    },
-                    iconV: Iconsax.user_square,
-                  ),
-                ],
+                    0.3,
+                    1,
+                  ],
+                ),
+                borderGradient: LinearGradient(
+                    begin: Alignment.bottomRight,
+                    end: Alignment.topLeft,
+                    colors: [
+                      const Color(0xFF4579C5).withAlpha(100),
+                      const Color(0x0fffffff).withAlpha(55),
+                      const Color(0xFFFD673A).withAlpha(10),
+                    ],
+                    stops: const [
+                      0.06,
+                      0.95,
+                      1
+                    ]),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    text(
+                      text: "Welcome",
+                      color: blackShadeTextClr,
+                      fontSize: 50.sp,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    textBtnWithIcon(
+                      bgClr: Colors.white,
+                      color: primaryColor,
+                      radius: 25,
+                      fontSize: 14.sp,
+                      width: 0.7.sw,
+                      fontWeight: FontWeight.w500,
+                      size: 35.h,
+                      primaryClr: primaryColor,
+                      text: "Retailer Login",
+                      borderWidth: 1,
+                      function: () {
+                        ref.read(userRoleProvider.notifier).change("Retailer");
+                        moveToNextScreen(context, RouteName.signIn);
+                      },
+                      iconV: Iconsax.house_2,
+                    ),
+                    SizedBox(
+                      height: 15.h,
+                    ),
+                    textBtnWithIcon(
+                      bgClr: Colors.white,
+                      color: primaryColor,
+                      radius: 25,
+                      fontSize: 14.sp,
+                      width: 0.7.sw,
+                      fontWeight: FontWeight.w500,
+                      size: 35.h,
+                      primaryClr: primaryColor,
+                      text: "Customer Login",
+                      borderWidth: 1,
+                      function: () {
+                        ref.read(userRoleProvider.notifier).change("customer");
+                        moveToNextScreen(context, RouteName.signIn);
+                      },
+                      iconV: Iconsax.user_square,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

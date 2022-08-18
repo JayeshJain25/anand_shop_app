@@ -3,14 +3,20 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'provider/shared_preference.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  final sharedPreferences = await SharedPreferences.getInstance();
   await Firebase.initializeApp();
   runApp(
-    const ProviderScope(
-      child: MyApp(),
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+      ],
+      child: const MyApp(),
     ),
   );
 }

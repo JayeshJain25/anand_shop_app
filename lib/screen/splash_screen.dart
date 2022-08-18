@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../provider/database_provider.dart';
+import '../provider/user_provider.dart';
 import '../routes/route_name.dart';
 import '../utils/colors.dart';
 import '../utils/common_function.dart';
@@ -27,9 +29,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   }
 
   displaySplash() {
-    Timer(const Duration(seconds: 3), () async {
+    Timer(const Duration(seconds: 2), () async {
       if (user != null) {
-        moveToNextScreen(context, RouteName.homeScreen);
+        ref.read(databaseProvider).getUser(user!.uid).then((value) {
+          ref.read(userProvider.notifier).changeData(value);
+          moveToNextScreen(context, RouteName.bottomNavigation);
+        });
       } else {
         moveToNextScreen(context, RouteName.selectUser);
       }

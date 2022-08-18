@@ -1,3 +1,5 @@
+import 'package:anand_shop_app/model/user_model.dart';
+import 'package:anand_shop_app/provider/user_provider.dart';
 import 'package:anand_shop_app/widget/common_widget.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 
 import '../../provider/auth_provider.dart';
+import '../../provider/database_provider.dart';
+import '../../provider/login_provider.dart';
+import '../../provider/shared_preference.dart';
 import '../../routes/route_name.dart';
 import '../../utils/colors.dart';
 import '../../utils/common_function.dart';
@@ -23,6 +28,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
   TextEditingController rePassController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
@@ -33,12 +39,15 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
     emailController.dispose();
     passController.dispose();
     rePassController.dispose();
+    nameController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final response = ref.watch(databaseProvider);
     final auth = ref.watch(authenticationProvider);
+    bool value = ref.watch(signUpLoadingProvider);
     return Form(
       key: formKey,
       child: SafeArea(
@@ -97,6 +106,7 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                           height: 15.h,
                         ),
                         inputTextFieldWithIcon(
+                          controller: nameController,
                           hintTxt: "John",
                           icon: const Icon(
                             Iconsax.user,
@@ -157,7 +167,8 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         const SizedBox(
                           height: 45,
                         ),
-                        textBtn(
+                        loadingBtn(
+                          value: value,
                           bgClr: blackShadeTextClr,
                           function: () async {
                             final isValidForm =
@@ -165,13 +176,50 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                             if (isValidForm) {
                               if (passController.text ==
                                   rePassController.text) {
+                                ref
+                                    .read(signUpLoadingProvider.notifier)
+                                    .change(true);
                                 await auth
                                     .signUpWithEmailAndPassword(
-                                        emailController.text,
-                                        passController.text,
-                                        context)
-                                    .whenComplete(() => moveToNextScreen(
-                                        context, RouteName.homeScreen));
+                                  emailController.text,
+                                  passController.text,
+                                  context,
+                                  ref.read,
+                                )
+                                    .then((value) {
+                                  if (value.isNotEmpty) {
+                                    ref
+                                        .read(sharedUtilityProvider)
+                                        .setUserUid(value);
+                                    UserModel user = UserModel(
+                                      uid: value,
+                                      name: nameController.text,
+                                      phoneNumber:
+                                          "+91${phoneNumberController.text}",
+                                      email: emailController.text,
+                                      role: ref.read(userRoleProvider),
+                                    );
+                                    response
+                                        .addUser(
+                                      user,
+                                    )
+                                        .then((value) {
+                                      if (value) {
+                                        ref
+                                            .read(userProvider.notifier)
+                                            .changeData(user);
+                                        moveToNextScreen(context,
+                                            RouteName.bottomNavigation);
+                                      } else {
+                                        toast(text: "There was an error.");
+                                      }
+                                    });
+
+                                    ref
+                                        .read(signUpLoadingProvider.notifier)
+                                        .change(false);
+                                  }
+                                });
                               } else {
                                 toast(text: "Password incorrect");
                               }
