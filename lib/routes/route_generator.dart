@@ -1,5 +1,6 @@
 import 'package:anand_shop_app/routes/route_name.dart';
 import 'package:anand_shop_app/screen/account_dashboard/account_screen.dart';
+import 'package:anand_shop_app/screen/account_dashboard/profile_screen.dart';
 import 'package:anand_shop_app/screen/auth/login_screen.dart';
 import 'package:anand_shop_app/screen/auth/select_user_screen.dart';
 import 'package:anand_shop_app/screen/auth/sign_up_screen.dart';
@@ -39,6 +40,10 @@ class RouteGenerator {
       case RouteName.accountScreen:
         return MaterialPageRoute(
           builder: (_) => const AccountScreen(),
+        );
+      case RouteName.profileScreen:
+        return MaterialPageRoute(
+          builder: (_) => const ProfileScreen(),
         );
       default:
         return MaterialPageRoute<Widget>(

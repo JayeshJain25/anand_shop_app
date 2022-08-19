@@ -30,3 +30,14 @@ class SignUpLoadingProvider extends StateNotifier<bool> {
 
   void change(bool value) => state = value;
 }
+
+final updateProfileLoadingProvider =
+    StateNotifierProvider<UpdateProfileLoadingProvider, bool>(
+  (ref) => UpdateProfileLoadingProvider(),
+);
+
+class UpdateProfileLoadingProvider extends StateNotifier<bool> {
+  UpdateProfileLoadingProvider() : super(false);
+
+  void change(bool value) => state = value;
+}

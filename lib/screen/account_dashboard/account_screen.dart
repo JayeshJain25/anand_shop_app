@@ -77,7 +77,9 @@ class AccountScreen extends ConsumerWidget {
                 ),
                 child: accountDashboardTItle(
                   icon: Iconsax.user,
-                  function: () {},
+                  function: () {
+                    moveToNextScreen(context, RouteName.profileScreen);
+                  },
                   textV: "Profile",
                 ),
               ),
