@@ -46,42 +46,47 @@ class HomeScreen extends ConsumerWidget {
               return ListView.builder(
                   itemCount: snapshot.data!.docs.length,
                   itemBuilder: (ctx, index) {
-                    return Container(
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 15,
-                        horizontal: 25,
-                      ),
-                      child: Stack(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(20),
-                            child: CachedNetworkImage(
-                              imageUrl: snapshot.data!.docs[index]["image"],
-                              height: 170.h,
-                              width: 1.sw,
-                              fit: BoxFit.fitWidth,
-                            ),
-                          ),
-                          Positioned.fill(
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
+                    return InkWell(
+                      onTap: () {
+                        moveToNextScreen(context, RouteName.productListScreen);
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 15,
+                          horizontal: 25,
+                        ),
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(20),
+                              child: CachedNetworkImage(
+                                imageUrl: snapshot.data!.docs[index]["image"],
+                                height: 170.h,
                                 width: 1.sw,
-                                height: 30.h,
-                                color: Colors.black38,
-                                child: Center(
-                                  child: text(
-                                    color: Colors.black,
-                                    fontSize: 20.sp,
-                                    fontWeight: FontWeight.bold,
-                                    text: snapshot.data!.docs[index]
-                                        ["category"],
+                                fit: BoxFit.fitWidth,
+                              ),
+                            ),
+                            Positioned.fill(
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: Container(
+                                  width: 1.sw,
+                                  height: 30.h,
+                                  color: Colors.black38,
+                                  child: Center(
+                                    child: text(
+                                      color: Colors.black,
+                                      fontSize: 20.sp,
+                                      fontWeight: FontWeight.bold,
+                                      text: snapshot.data!.docs[index]
+                                          ["category"],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     );
                   });
