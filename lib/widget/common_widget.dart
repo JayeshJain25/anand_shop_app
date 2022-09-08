@@ -71,6 +71,7 @@ Widget inputTextFieldWithIcon({
       } else {
         return null;
       }
+      return null;
     },
     keyboardType: type,
     controller: controller,
@@ -241,7 +242,7 @@ Widget textBtnWithIcon(
     double? radius}) {
   return TextButton(
     style: TextButton.styleFrom(
-      primary: primaryClr,
+      foregroundColor: primaryClr,
       backgroundColor: bgClr,
       minimumSize: Size(width ?? double.infinity, size),
       shape: RoundedRectangleBorder(

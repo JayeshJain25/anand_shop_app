@@ -22,7 +22,7 @@ class Authentication {
           email: email, password: password);
 
       return userCredential.user!.uid;
-    } on FirebaseAuthException catch (e) {
+    } on FirebaseAuthException {
       read(loginLoadingProvider.notifier).change(false);
       toast(text: "The email address or password is incorrect");
     }

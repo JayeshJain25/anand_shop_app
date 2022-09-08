@@ -59,7 +59,6 @@ class DatabaseProvider {
       });
       return true; //// return true after successful updation .
     } catch (e) {
-      print(e.toString());
       return Future.error(e); //return error
     }
   }
