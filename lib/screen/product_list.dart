@@ -17,6 +17,12 @@ class ProductListScreen extends ConsumerStatefulWidget {
 
 class _ProductListScreenState extends ConsumerState<ProductListScreen> {
   @override
+  void initState() {
+    super.initState();
+    getData(ref.read(mainCategoryProvider)["id"]!.trim());
+  }
+
+  @override
   Widget build(BuildContext context) {
     int subCategorySelectedIndex = ref.watch(subCategorySelectedIndexProvider);
     Map<String, String> mainCategory = ref.watch(mainCategoryProvider);
@@ -185,88 +191,89 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
               }
             }),
           ),
-          StreamBuilder<QuerySnapshot>(
-              stream: subCategorySelectedIndex == 0
-                  ? FirebaseFirestore.instance
-                      .collection('product')
-                      .doc(mainCategory["id"]!.trim())
-                      .collection("subcategory")
-                      .doc("lrE5aTF2X2XdZUTrKUC5")
-                      .collection("subcategory2")
-                      .snapshots()
-                  : FirebaseFirestore.instance
-                      .collection('product')
-                      .doc(mainCategory["id"]!.trim())
-                      .collection("subcategory")
-                      .doc(subCategoryDocId.trim())
-                      .collection("subcategory2")
-                      .snapshots(),
-              builder: ((context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Center(
-                    child: text(
-                      text: "Product Not Available",
-                      color: Colors.black,
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  );
-                } else {
-                  if (snapshot.data!.docs.isEmpty) {
-                    return Center(
-                      child: text(
-                        text: "Product Not Available",
-                        color: Colors.black,
-                        fontSize: 18.sp,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    );
-                  }
-                  print(snapshot.data!.docs.length);
-                  return SizedBox(
-                    height: 0.8.sh,
-                    child: ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: ((context, index) {
-                          return Container(
-                              margin: const EdgeInsets.all(10),
-                              height: 100.h,
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(
-                                      20,
-                                    ),
-                                    child: CachedNetworkImage(
-                                      imageUrl: snapshot.data!.docs[index]
-                                          ["image"],
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    width: 15,
-                                  ),
-                                  Column(
+          subCategorySelectedIndex == 0
+              ? SizedBox()
+              : StreamBuilder<QuerySnapshot>(
+                  stream: subCategorySelectedIndex == 0
+                      ? FirebaseFirestore.instance
+                          .collection('product')
+                          .doc(mainCategory["id"]!.trim())
+                          .collection("subcategory")
+                          .doc("lrE5aTF2X2XdZUTrKUC5")
+                          .collection("subcategory2")
+                          .snapshots()
+                      : FirebaseFirestore.instance
+                          .collection('product')
+                          .doc(mainCategory["id"]!.trim())
+                          .collection("subcategory")
+                          .doc(subCategoryDocId.trim())
+                          .collection("subcategory2")
+                          .snapshots(),
+                  builder: ((context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Center(
+                        child: text(
+                          text: "Product Not Available",
+                          color: Colors.black,
+                          fontSize: 18.sp,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      );
+                    } else {
+                      if (snapshot.data!.docs.isEmpty) {
+                        return Center(
+                          child: text(
+                            text: "Product Not Available",
+                            color: Colors.black,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        );
+                      }
+                      return SizedBox(
+                        height: 0.8.sh,
+                        child: ListView.builder(
+                            itemCount: snapshot.data!.docs.length,
+                            itemBuilder: ((context, index) {
+                              return Container(
+                                  margin: const EdgeInsets.all(10),
+                                  height: 100.h,
+                                  child: Row(
                                     children: [
-                                      const SizedBox(
-                                        height: 10,
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                          20,
+                                        ),
+                                        child: CachedNetworkImage(
+                                          imageUrl: snapshot.data!.docs[index]
+                                              ["image"],
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
-                                      text(
-                                        color: Colors.black,
-                                        fontSize: 20.sp,
-                                        fontWeight: FontWeight.normal,
-                                        text:
-                                            "Name:  ${snapshot.data!.docs[index]["title"]}",
-                                        textAlign: TextAlign.start,
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      Column(
+                                        children: [
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          text(
+                                            color: Colors.black,
+                                            fontSize: 20.sp,
+                                            fontWeight: FontWeight.normal,
+                                            text:
+                                                "Name:  ${snapshot.data!.docs[index]["title"]}",
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
                                       ),
                                     ],
-                                  ),
-                                ],
-                              ));
-                        })),
-                  );
-                }
-              }))
+                                  ));
+                            })),
+                      );
+                    }
+                  }))
         ],
       )),
     );
