@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../model/sub_product_model.dart';
@@ -47,19 +48,9 @@ class SubCategoryDocIdProvider extends StateNotifier<String> {
   void change(String value) => state = value;
 }
 
-final subCategoryListProvider =
-    StateNotifierProvider<SubCategoryListProvider, List<SubProductModel>>(
-  (ref) => SubCategoryListProvider(),
-);
-
-class SubCategoryListProvider extends StateNotifier<List<SubProductModel>> {
-  SubCategoryListProvider() : super([]);
-
-  void change(List<SubProductModel> value) => state = value;
-}
-
 Future<List<SubProductModel>> getData(String categoryId) async {
   List<SubProductModel> list = [];
+
   FirebaseFirestore.instance
       .collection('product')
       .doc(categoryId)

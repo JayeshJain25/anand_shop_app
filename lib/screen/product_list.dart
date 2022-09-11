@@ -1,3 +1,4 @@
+import 'package:anand_shop_app/model/sub_product_model.dart';
 import 'package:anand_shop_app/provider/product_provider.dart';
 import 'package:anand_shop_app/utils/colors.dart';
 import 'package:anand_shop_app/widget/common_widget.dart';
@@ -16,12 +17,6 @@ class ProductListScreen extends ConsumerStatefulWidget {
 }
 
 class _ProductListScreenState extends ConsumerState<ProductListScreen> {
-  @override
-  void initState() {
-    super.initState();
-    getData(ref.read(mainCategoryProvider)["id"]!.trim());
-  }
-
   @override
   Widget build(BuildContext context) {
     int subCategorySelectedIndex = ref.watch(subCategorySelectedIndexProvider);
@@ -192,7 +187,57 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
             }),
           ),
           subCategorySelectedIndex == 0
-              ? SizedBox()
+              ? FutureBuilder<List<SubProductModel>>(
+                  future: getData(ref.read(mainCategoryProvider)["id"]!.trim()),
+                  builder: (ctx, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    } else {
+                      return SizedBox(
+                        height: 0.8.sh,
+                        child: ListView.builder(
+                            itemCount: snapshot.data!.length,
+                            itemBuilder: (ctx, index) {
+                              return Container(
+                                  margin: const EdgeInsets.all(10),
+                                  height: 100.h,
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(
+                                          20,
+                                        ),
+                                        child: CachedNetworkImage(
+                                          imageUrl: snapshot.data![index].image,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        width: 15,
+                                      ),
+                                      Column(
+                                        children: [
+                                          const SizedBox(
+                                            height: 10,
+                                          ),
+                                          text(
+                                            color: Colors.black,
+                                            fontSize: 20.sp,
+                                            fontWeight: FontWeight.normal,
+                                            text:
+                                                "Name:  ${snapshot.data![index].title}",
+                                            textAlign: TextAlign.start,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ));
+                            }),
+                      );
+                    }
+                  })
               : StreamBuilder<QuerySnapshot>(
                   stream: subCategorySelectedIndex == 0
                       ? FirebaseFirestore.instance
