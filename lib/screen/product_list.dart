@@ -1,6 +1,9 @@
 import 'package:anand_shop_app/model/sub_product_model.dart';
+import 'package:anand_shop_app/provider/firestore_data_provider.dart';
 import 'package:anand_shop_app/provider/product_provider.dart';
+import 'package:anand_shop_app/routes/route_name.dart';
 import 'package:anand_shop_app/utils/colors.dart';
+import 'package:anand_shop_app/utils/common_function.dart';
 import 'package:anand_shop_app/widget/common_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -188,72 +191,101 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
           ),
           subCategorySelectedIndex == 0
               ? FutureBuilder<List<SubProductModel>>(
-                  future: getData(ref.read(mainCategoryProvider)["id"]!.trim()),
+                  future: ref
+                      .read(firestoreDataProvider)
+                      .getData(ref.read(mainCategoryProvider)["id"]!.trim()),
                   builder: (ctx, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
+                      return const Center(
                         child: CircularProgressIndicator(),
                       );
                     } else {
-                      return SizedBox(
-                        height: 0.8.sh,
-                        child: ListView.builder(
-                            itemCount: snapshot.data!.length,
-                            itemBuilder: (ctx, index) {
-                              return Container(
-                                  margin: const EdgeInsets.all(10),
-                                  height: 100.h,
-                                  child: Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(
-                                          20,
-                                        ),
-                                        child: CachedNetworkImage(
-                                          imageUrl: snapshot.data![index].image,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 15,
-                                      ),
-                                      Column(
+                      if (snapshot.hasData) {
+                        return SizedBox(
+                          height: 0.8.sh,
+                          child: ListView.builder(
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (ctx, index) {
+                                return InkWell(
+                                  onTap: () {
+                                    ref
+                                        .read(firestoreDataProvider)
+                                        .getSubCategory3List(
+                                          mainCategory["id"]!.trim(),
+                                          snapshot.data![index].id.trim(),
+                                        )
+                                        .then((value) {
+                                      ref
+                                          .read(
+                                              subCategoryDocIdProvider.notifier)
+                                          .change(
+                                            value,
+                                          );
+                                      ref
+                                          .read(subCategoryProvider.notifier)
+                                          .change(snapshot.data![index]);
+                                      moveToNextScreen(context,
+                                          RouteName.productDetailScreen);
+                                    });
+                                  },
+                                  child: Container(
+                                      margin: const EdgeInsets.all(10),
+                                      height: 100.h,
+                                      child: Row(
                                         children: [
-                                          const SizedBox(
-                                            height: 10,
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                            child: CachedNetworkImage(
+                                              imageUrl:
+                                                  snapshot.data![index].image,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
-                                          text(
-                                            color: Colors.black,
-                                            fontSize: 20.sp,
-                                            fontWeight: FontWeight.normal,
-                                            text:
-                                                "Name:  ${snapshot.data![index].title}",
-                                            textAlign: TextAlign.start,
+                                          const SizedBox(
+                                            width: 15,
+                                          ),
+                                          Column(
+                                            children: [
+                                              const SizedBox(
+                                                height: 10,
+                                              ),
+                                              text(
+                                                color: Colors.black,
+                                                fontSize: 20.sp,
+                                                fontWeight: FontWeight.normal,
+                                                text:
+                                                    "Name:  ${snapshot.data![index].title}",
+                                                textAlign: TextAlign.start,
+                                              ),
+                                            ],
                                           ),
                                         ],
-                                      ),
-                                    ],
-                                  ));
-                            }),
-                      );
+                                      )),
+                                );
+                              }),
+                        );
+                      } else {
+                        return Center(
+                          child: text(
+                            text: "Product Not Available",
+                            color: Colors.black,
+                            fontSize: 18.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        );
+                      }
                     }
                   })
               : StreamBuilder<QuerySnapshot>(
-                  stream: subCategorySelectedIndex == 0
-                      ? FirebaseFirestore.instance
-                          .collection('product')
-                          .doc(mainCategory["id"]!.trim())
-                          .collection("subcategory")
-                          .doc("lrE5aTF2X2XdZUTrKUC5")
-                          .collection("subcategory2")
-                          .snapshots()
-                      : FirebaseFirestore.instance
-                          .collection('product')
-                          .doc(mainCategory["id"]!.trim())
-                          .collection("subcategory")
-                          .doc(subCategoryDocId.trim())
-                          .collection("subcategory2")
-                          .snapshots(),
+                  stream: FirebaseFirestore.instance
+                      .collection('product')
+                      .doc(mainCategory["id"]!.trim())
+                      .collection("subcategory")
+                      .doc(subCategoryDocId.trim())
+                      .collection("subcategory2")
+                      .snapshots(),
                   builder: ((context, snapshot) {
                     if (!snapshot.hasData) {
                       return Center(
@@ -280,41 +312,56 @@ class _ProductListScreenState extends ConsumerState<ProductListScreen> {
                         child: ListView.builder(
                             itemCount: snapshot.data!.docs.length,
                             itemBuilder: ((context, index) {
-                              return Container(
-                                  margin: const EdgeInsets.all(10),
-                                  height: 100.h,
-                                  child: Row(
-                                    children: [
-                                      ClipRRect(
-                                        borderRadius: BorderRadius.circular(
-                                          20,
-                                        ),
-                                        child: CachedNetworkImage(
-                                          imageUrl: snapshot.data!.docs[index]
+                              return InkWell(
+                                onTap: () {
+                                  ref.read(subCategoryProvider.notifier).change(
+                                        SubProductModel(
+                                          title: snapshot.data!.docs[index]
+                                              ["title"],
+                                          id: snapshot.data!.docs[index]["id"],
+                                          image: snapshot.data!.docs[index]
                                               ["image"],
-                                          fit: BoxFit.cover,
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        width: 15,
-                                      ),
-                                      Column(
-                                        children: [
-                                          const SizedBox(
-                                            height: 10,
+                                      );
+                                  moveToNextScreen(
+                                      context, RouteName.productDetailScreen);
+                                },
+                                child: Container(
+                                    margin: const EdgeInsets.all(10),
+                                    height: 100.h,
+                                    child: Row(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            20,
                                           ),
-                                          text(
-                                            color: Colors.black,
-                                            fontSize: 20.sp,
-                                            fontWeight: FontWeight.normal,
-                                            text:
-                                                "Name:  ${snapshot.data!.docs[index]["title"]}",
-                                            textAlign: TextAlign.start,
+                                          child: CachedNetworkImage(
+                                            imageUrl: snapshot.data!.docs[index]
+                                                ["image"],
+                                            fit: BoxFit.cover,
                                           ),
-                                        ],
-                                      ),
-                                    ],
-                                  ));
+                                        ),
+                                        const SizedBox(
+                                          width: 15,
+                                        ),
+                                        Column(
+                                          children: [
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            text(
+                                              color: Colors.black,
+                                              fontSize: 20.sp,
+                                              fontWeight: FontWeight.normal,
+                                              text:
+                                                  "Name:  ${snapshot.data!.docs[index]["title"]}",
+                                              textAlign: TextAlign.start,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    )),
+                              );
                             })),
                       );
                     }
